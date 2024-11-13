@@ -1,6 +1,7 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using RockTheVote.Commands;
+using RockTheVote.EventsHandlers;
 using RockTheVote.Extensions;
 using RockTheVote.Services;
 
@@ -29,6 +30,7 @@ namespace RockTheVote
 		public override void Load(bool hotReload)
 		{
 			AddCommands();
+			RegisterEventsHandlers();
 
 			EventSubscribers();
 		}
@@ -38,6 +40,14 @@ namespace RockTheVote
 		private void AddCommands()
 		{
 			AddCommand("css_timeleft", "Отображает время до конца карты.", CSS_timeleft_Command.Handler);
+			AddCommand("css_rtv", "Голос за смену карты.", CSS_rtv_Command.Handler);
+			AddCommand("css_nominate", "Номинировать карту.", CSS_nominate_Command.Handler);
+		}
+
+		private void RegisterEventsHandlers()
+		{
+			RegisterEventHandler<EventPlayerDisconnect>(PlayerDisconnectEvent.Handler);
+			RegisterEventHandler<EventPlayerDeath>(PlayerDeathEvent.Handler);
 		}
 		#endregion
 

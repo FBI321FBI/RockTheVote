@@ -22,8 +22,14 @@ namespace RockTheVote.Services
 		public delegate void NominatedMapPlayer(CCSPlayerController player, MapReadModel map);
 		public static event NominatedMapPlayer? NominatedMapPlayerEvent;
 
-		public delegate void DeNominatedMapPlayer(CCSPlayerController player, MapReadModel map);
+		public delegate void DeNominatedMapPlayer(CCSPlayerController player, MapReadModel oldMap);
 		public static event DeNominatedMapPlayer? DeNominatedMapPlayerEvent;
+
+		public delegate void ReNominatedMapPlayer(CCSPlayerController player, MapReadModel map);
+		public static event ReNominatedMapPlayer? ReNominatedMapPlayerEvent;
+
+		public delegate void PlayerVoteRtv(CCSPlayerController player, MapReadModel map);
+		public static event PlayerVoteRtv? PlayerVoteRtvEvent;
 		#endregion
 
 		#region Properties
@@ -31,6 +37,7 @@ namespace RockTheVote.Services
 		public static string? NextMap { get; private set; }
 		public static ConcurrentDictionary<CCSPlayerController, MapReadModel> VotesMap = new();
 		public static ConcurrentDictionary<CCSPlayerController, MapReadModel> NominatedMaps = new();
+		public static ConcurrentDictionary<CCSPlayerController, MapReadModel> RtvVotes = new();
 
 		#endregion
 
@@ -67,7 +74,7 @@ namespace RockTheVote.Services
 
 		public static void VoteMap(CCSPlayerController player, MapReadModel map)
 		{
-			if(VotesMap.TryAdd(player, map))
+			if (VotesMap.TryAdd(player, map))
 			{
 				VoteMapPlayerEvent?.Invoke(player, map);
 			}
@@ -75,7 +82,7 @@ namespace RockTheVote.Services
 
 		public static void ReVoteMap(CCSPlayerController player, MapReadModel map)
 		{
-			if(VotesMap.TryRemove(player, out MapReadModel? _map))
+			if (VotesMap.TryRemove(player, out MapReadModel? _map))
 			{
 				VoteMap(player, _map);
 				ReVoteMapPlayerEvent?.Invoke(player, _map);
@@ -86,24 +93,45 @@ namespace RockTheVote.Services
 			}
 		}
 
-		public static void NominatedMap(CCSPlayerController player, MapReadModel map)
+		public static bool NominatedMap(CCSPlayerController player, MapReadModel map)
 		{
-			if(NominatedMaps.TryAdd(player, map))
+			if (NominatedMaps.TryAdd(player, map))
 			{
 				NominatedMapPlayerEvent?.Invoke(player, map);
-			}
-		}
-
-		public static void DeNominatedMap(CCSPlayerController player, MapReadModel map)
-		{
-			if(NominatedMaps.TryRemove(player, out MapReadModel? _map))
-			{
-				NominatedMap(player, _map);
-				DeNominatedMapPlayerEvent?.Invoke(player, _map);
+				return true;
 			}
 			else
 			{
-				NominatedMap(player, _map!);
+				return false;
+			}
+		}
+
+		public static void DeNominatedMap(CCSPlayerController player)
+		{
+			if (NominatedMaps.TryRemove(player, out MapReadModel? _map))
+			{
+				DeNominatedMapPlayerEvent?.Invoke(player, _map);
+			}
+		}
+
+		public static void ReNominatedMap(CCSPlayerController player, MapReadModel map)
+		{
+			if (NominatedMaps.TryRemove(player, out MapReadModel? _map))
+			{
+				NominatedMap(player, map);
+				ReNominatedMapPlayerEvent?.Invoke(player, _map);
+			}
+			else
+			{
+				NominatedMap(player, map);
+			}
+		}
+
+		public static void VoteRtv(CCSPlayerController player, MapReadModel map)
+		{
+			if (RtvVotes.TryAdd(player, map))
+			{
+				PlayerVoteRtvEvent?.Invoke(player, map);
 			}
 		}
 		#endregion
