@@ -3,9 +3,9 @@ using RockTheVote.Services;
 
 namespace RockTheVote.EventsHandlers
 {
-	public static class RoundStartEvent
+	public static class RoundEndEvent
 	{
-		public static HookResult Handler(EventRoundStart @event, GameEventInfo info)
+		public static HookResult Handler(EventRoundEnd @event, GameEventInfo info)
 		{
 			if(MapService.NextMap != null)
 			{

@@ -1,8 +1,10 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using RockTheVote.Commands;
 using RockTheVote.EventsHandlers;
 using RockTheVote.EventsHandlers.RtvEventsHandlers;
 using RockTheVote.Proxys;
+using RockTheVote.Services;
 
 namespace RockTheVote
 {
@@ -10,7 +12,7 @@ namespace RockTheVote
 	{
 		#region Properties
 		#region Override
-		public override string ModuleName => "RTV";
+		public override string ModuleName => "RockTheVote";
 
 		public override string ModuleVersion => "0.1";
 		#endregion
@@ -30,8 +32,8 @@ namespace RockTheVote
 		{
 			AddCommands();
 			RegisterEventsHandlers();
-
 			RtvEventSubscribers();
+			RegisterListenersHandlers();
 		}
 		#endregion
 
@@ -42,12 +44,27 @@ namespace RockTheVote
 			AddCommand("css_rtv", "Голос за смену карты.", CSS_rtv_Command.Handler);
 			AddCommand("css_nominate", "Номинировать карту.", CSS_nominate_Command.Handler);
 		}
+		#endregion
 
+		#region Events
 		private void RegisterEventsHandlers()
 		{
 			RegisterEventHandler<EventPlayerDisconnect>(PlayerDisconnectEvent.Handler);
 			RegisterEventHandler<EventPlayerDeath>(PlayerDeathEvent.Handler);
-			RegisterEventHandler<EventRoundStart>(RoundStartEvent.Handler, HookMode.Pre);
+			RegisterEventHandler<EventRoundEnd>(RoundEndEvent.Handler);
+		}
+		#endregion
+
+		#region Listeners
+		private void RegisterListenersHandlers()
+		{
+			RegisterListener<Listeners.OnMapEnd>(()=>
+			{
+				MapServiceProxy.SetNextMap(null);
+				//Server.ExecuteCommand($"css_plugins reload RockTheVote");
+				//Server.ExecuteCommand($"css_plugins unload RockTheVote");
+				//Server.ExecuteCommand($"css_plugins load RockTheVote");
+			});
 		}
 		#endregion
 
