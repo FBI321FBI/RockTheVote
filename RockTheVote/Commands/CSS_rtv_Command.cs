@@ -20,15 +20,25 @@ namespace RockTheVote.Commands
 		public static void Handler(CCSPlayerController? player, CommandInfo info)
 		{
 			if (!player.IsPlayerValid()) return;
+			var minPlayersForStartRtv = RockTheVoteService.RockTheVoteConfig.RockTheVote.MinPlayersForStartRtv;
+			if (!minPlayersForStartRtv.Equals(Utilities.GetPlayers().Where(x=>x.IsPlayerValid() == true).Count()))
+			{
+				player.PrintToChatSafe(_localization["RockTheVoteConfig.MinPlayersForStartRtv", minPlayersForStartRtv]);
+				return;
+			}
+
+			if(MapService.NextMap != null)
+			{
+				player.PrintToChatSafe(_localization["NextMapMessage", MapService.NextMap]);
+				return;
+			}
+
+			int requiredVotes = RockTheVoteService.RequiredNumberVotesChangeMap;
 
 			MapServiceProxy.VoteRtv(player!);
 
-			if (MapService.RtvVotes.Where(x => x == player).Single() == null)
-			{
-				int requiredVotes = RockTheVoteService.RequiredNumberVotesChangeMap;
-				int countVotes = MapService.RtvVotes.Count;
-				new Server().PrintToChatAllSafe(_localization["Rtv.PlayerVoteAgain", countVotes, requiredVotes]);
-			}
+			int countVotes = MapService.RtvVotes.Count;
+			new Server().PrintToChatAllSafe(_localization["Rtv.PlayerSendRtv", countVotes, requiredVotes]);
 		}
 		#endregion
 	}

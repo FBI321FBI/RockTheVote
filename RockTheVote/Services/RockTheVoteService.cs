@@ -38,25 +38,26 @@ namespace RockTheVote.Services
 
 		public static void StartVoteNewMap()
 		{
-			var maps = MapServiceProxy.GetMaps();
-			var nominatedMenu = new RtvMenu(_localization["Rtv.MenuTitle"], _plugin);
-			nominatedMenu.CreateMenuOptions(maps);
-			nominatedMenu.OpenToAll();
+			var maps = MapServiceProxy.GetMaps()?.Where(x=>x.Name != Server.MapName);
+			var rtvMenu = new RtvMenu(_localization["Rtv.MenuTitle"], _plugin);
+			rtvMenu.CreateMenuOptions(maps);
+			rtvMenu.OpenToAll();
+			MapServiceProxy.MapSelectionStart();
 
-			Timer timer = new Timer(10000, () =>
+			new Timer(10, () =>
 			{
 				Utilities.GetPlayers().Where(x => x.IsPlayerValid() == true).ToList().ForEach(x =>
 				{
 					if (MenuManager.GetActiveMenu(x) is BaseMenuInstance menu)
 					{
-						if (menu is IRtvMenu)
+						if (menu.Menu is IRtvMenu)
 						{
 							menu.Close();
+							MapServiceProxy.MapSelectionEnd();
 						}
 					}
 				});
 			});
-			timer.Kill();
 		}
 
 		public static void SwitchMapForced(MapReadModel map)

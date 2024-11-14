@@ -17,24 +17,28 @@ namespace RockTheVote.EventsHandlers.RtvEventsHandlers
 		#region Handler
 		public static void Handler(CCSPlayerController player)
 		{
-			if (MapService.RtvVotes.Count.Equals(RockTheVoteService.RequiredNumberVotesChangeMap))
+			if (MapService.RtvVotes.Count.Equals(RockTheVoteService.RequiredNumberVotesChangeMap)
+				&& MapService.NextMap == null)
 			{
-				Timer timer = new Timer(1, () =>
+				int secondsCount = 0;
+				int maxSecondsCount = 3;
+				new Timer(1, () =>
 				{
-					int secondsCount = 0;
-					if (secondsCount != 3)
+					new Server().PrintToChatAllSafe($"{_localizer["Rtv.StartVoting", maxSecondsCount - secondsCount]}");
+					secondsCount++;
+					new Timer(1, () =>
 					{
-						new Server().PrintToChatAllSafe($"{_localizer["Rtv.StartVoting"]}");
+						new Server().PrintToChatAllSafe($"{_localizer["Rtv.StartVoting", maxSecondsCount - secondsCount]}");
 						secondsCount++;
-					}
-					else
-					{
-						RockTheVoteService.StartVoteNewMap();
-						return;
-					}
-				}, TimerFlags.REPEAT);
+						new Timer(1, () =>
+						{
+							new Server().PrintToChatAllSafe($"{_localizer["Rtv.StartVoting", maxSecondsCount - secondsCount]}");
+							RockTheVoteService.StartVoteNewMap();
+						});
+					});
+				});
 			}
 		}
-		#endregion
 	}
+	#endregion
 }

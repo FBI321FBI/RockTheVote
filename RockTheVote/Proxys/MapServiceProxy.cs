@@ -1,6 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using RockTheVote.ReadModels;
 using RockTheVote.Services;
+using static RockTheVote.Proxys.MapServiceProxy;
 
 namespace RockTheVote.Proxys
 {
@@ -52,6 +53,18 @@ namespace RockTheVote.Proxys
 		/// Событие, когда игрок прописывает команду rtv.
 		/// </summary>
 		public static event PlayerVoteRtv? PlayerVoteRtvEvent;
+
+		public delegate void MapSelectionStarted();
+		/// <summary>
+		/// Событие начала выбора следующей карты.
+		/// </summary>
+		public static event MapSelectionStarted? MapSelectionStartedEvent;
+
+		public delegate void MapSelectionEnded(MapReadModel map);
+		/// <summary>
+		/// Событие законченного выбора следующей карты.
+		/// </summary>
+		public static event MapSelectionEnded? MapSelectionEndedEvent;
 		#endregion
 
 		#region Publuic
@@ -166,7 +179,8 @@ namespace RockTheVote.Proxys
 		/// Проголосовать за начало rtv.
 		/// </summary>
 		/// <param name="player">Игрок.</param>
-		/// <returns>true, если получилось проголосовать и false, если не получиось проголосовать.</returns>
+		/// <returns>true, если получилось проголосовать и false, если не получилось проголосовать
+		/// т.к. игрок уже проголосовал.</returns>
 		public static bool VoteRtv(CCSPlayerController player)
 		{
 			bool result = MapService.VoteRtv(player);
@@ -176,6 +190,24 @@ namespace RockTheVote.Proxys
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// Установить начало выбора карты.
+		/// </summary>
+		public static void MapSelectionStart()
+		{
+			MapService.MapSelectionStart();
+			MapSelectionStartedEvent?.Invoke();
+		}
+
+		/// <summary>
+		/// Установить конец выбора карты.
+		/// </summary>
+		public static void MapSelectionEnd()
+		{
+			MapService.MapSelectionEnd();
+			MapSelectionEndedEvent?.Invoke(MapService.NextMap!);
 		}
 		#endregion
 	}

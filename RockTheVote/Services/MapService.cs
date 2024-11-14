@@ -1,21 +1,19 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.Localization;
 using RockTheVote.Extensions;
 using RockTheVote.ReadModels;
 using System.Collections.Concurrent;
-using System.Diagnostics.Eventing.Reader;
 
 namespace RockTheVote.Services
 {
 	public static class MapService
 	{
 		#region Properties
-		private static IStringLocalizer _localizer = Plugin.BasePlugin!.Localizer;
 		public static MapReadModel? NextMap { get; private set; }
 		public static ConcurrentDictionary<CCSPlayerController, MapReadModel> VotesMap = new();
 		public static ConcurrentDictionary<CCSPlayerController, MapReadModel> NominatedMaps = new();
 		public static HashSet<CCSPlayerController> RtvVotes = new();
+		public static bool IsMapSelectionStarted = false;
 		#endregion
 
 		#region Public
@@ -69,6 +67,11 @@ namespace RockTheVote.Services
 			}
 		}
 
+		public static bool DeVoteMap(CCSPlayerController player)
+		{
+			return VotesMap.TryRemove(player, out MapReadModel? _map);
+		}
+
 		public static bool NominatedMap(CCSPlayerController player, MapReadModel map)
 		{
 			return NominatedMaps.TryAdd(player, map);
@@ -94,6 +97,28 @@ namespace RockTheVote.Services
 		public static bool VoteRtv(CCSPlayerController player)
 		{
 			return RtvVotes.Add(player);
+		}
+
+		public static bool DeVoteRtv(CCSPlayerController player)
+		{
+			return RtvVotes.Remove(player);
+		}
+
+		public static void UnsubscribeAll(CCSPlayerController player)
+		{
+			DeNominatedMap(player, out MapReadModel _);
+			DeVoteRtv(player);
+			DeVoteMap(player);
+		}
+
+		public static void MapSelectionStart()
+		{
+			IsMapSelectionStarted = true;
+		}
+
+		public static void MapSelectionEnd()
+		{
+			IsMapSelectionStarted = false;
 		}
 		#endregion
 	}

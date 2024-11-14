@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using Microsoft.Extensions.Localization;
 using RockTheVote.Extensions;
@@ -23,7 +24,7 @@ namespace RockTheVote.Commands
 				return;
 			}
 
-			var maps = MapServiceProxy.GetMaps();
+			var maps = MapServiceProxy.GetMaps()?.Where(x=>x.Name != Server.MapName);
 			var nominatedMenu = new NominatedMenu(_localization["Nominate.MenuTitle"], _plugin);
 			nominatedMenu.CreateMenuOptions(maps);
 			nominatedMenu.Open(player!);

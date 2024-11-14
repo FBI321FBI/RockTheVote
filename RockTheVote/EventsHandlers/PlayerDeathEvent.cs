@@ -15,7 +15,7 @@ namespace RockTheVote.EventsHandlers
 			{
 				if(MenuManager.GetActiveMenu(player!) is BaseMenuInstance menu)
 				{
-					if (menu is IRtvMenu)
+					if (menu.Menu is IRtvMenu)
 					{
 						menu.Close();
 					}

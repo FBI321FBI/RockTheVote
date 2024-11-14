@@ -1,15 +1,17 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using CounterStrikeSharp.API;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using RockTheVote.Extensions;
 using RockTheVote.ReadModels;
 using RockTheVote.Services;
 
 namespace RockTheVote.EventsHandlers.RtvEventsHandlers
 {
-	public static class EventAssigningNewMapEvent
+	public static class EventAssigningNewMap
 	{
 		#region Properties
-		private static ILogger _logger = Plugin.BasePlugin!.Logger;
 		private static IStringLocalizer _localizer = Plugin.BasePlugin!.Localizer;
+		private static ILogger _logger = Plugin.BasePlugin!.Logger;
 		#endregion
 
 		#region Handler
@@ -26,6 +28,8 @@ namespace RockTheVote.EventsHandlers.RtvEventsHandlers
 			{
 				RockTheVoteService.SwitchMapForced(map);
 			}
+
+			new Server().PrintToChatAllSafe(_localizer["NextMapMessage", map.VisibleName]);
 		}
 		#endregion
 	}

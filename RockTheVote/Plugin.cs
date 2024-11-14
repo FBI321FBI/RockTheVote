@@ -1,9 +1,7 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using RockTheVote.Commands;
 using RockTheVote.EventsHandlers;
 using RockTheVote.EventsHandlers.RtvEventsHandlers;
-using RockTheVote.Extensions;
 using RockTheVote.Proxys;
 
 namespace RockTheVote
@@ -56,8 +54,11 @@ namespace RockTheVote
 		#region Private
 		private void RtvEventSubscribers()
 		{
-			MapServiceProxy.AssigningNewMapEvent += (map) => new Server().PrintToChatAllSafe(Localizer["NextMapMessage", map.VisibleName!]);
 			MapServiceProxy.PlayerVoteRtvEvent += EventPlayerVoteRtv.Handler;
+			MapServiceProxy.MapSelectionStartedEvent += EventMapSelectionStarted.Handler;
+			MapServiceProxy.MapSelectionEndedEvent += EventMapSelectionEnded.Handler;
+			MapServiceProxy.VoteMapPlayerEvent += EventVoteMapPlayer.Handler;
+			MapServiceProxy.AssigningNewMapEvent += EventAssigningNewMap.Handler;
 		}
 		#endregion
 	}

@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API.Modules.Menu;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using RockTheVote.Extensions;
 using RockTheVote.Interface;
 using RockTheVote.Proxys;
 using RockTheVote.ReadModels;
@@ -33,10 +34,27 @@ namespace RockTheVote.Menus
 				return;
 			}
 
-			foreach (var map in maps)
+			var maxMapsOnRtvMenu = RockTheVoteService.RockTheVoteConfig.RockTheVote.MaxMapsOnRtvMenu;
+			var numberOfNominatedMaps = RockTheVoteService.RockTheVoteConfig.RockTheVote.NumberOfNominatedMaps;
+			var mapCount = maps.Count();
+			var defaultMapCount = Math.Max(0, maxMapsOnRtvMenu - Math.Min(MapService.NominatedMaps.Count, numberOfNominatedMaps));
+
+			if (MapService.NominatedMaps.Count != 0)
 			{
-				for
-				AddMenuOption(map.VisibleName ?? "None", SelectedItem);
+				for (var i = 0; i < numberOfNominatedMaps; i++)
+				{
+					var maxNumberOfNominatedMap = Math.Min(MapService.NominatedMaps.Count, numberOfNominatedMaps);
+					var nominatedMap = MapService.NominatedMaps.ElementAt(new Random().Next(0, maxNumberOfNominatedMap)).Value;
+					bool? isMapVoted = MapService.VotesMap.Where(x => x.Value.Name == nominatedMap.Name).SingleOrDefault().Value?.Equals(nominatedMap);
+					AddMenuOption(nominatedMap.VisibleName ?? "None", SelectedItem, !isMapVoted ?? false);
+				}
+			}
+
+			for (var i = 0; i < Math.Min(maxMapsOnRtvMenu, defaultMapCount); i++)
+			{
+				var map = maps.ElementAt(new Random().Next(0, Math.Min(maxMapsOnRtvMenu, defaultMapCount)));
+				bool? isMapVoted = MapService.VotesMap.Where(x => x.Value.Name == map.Name).SingleOrDefault().Value?.Equals(map);
+				AddMenuOption(map.VisibleName ?? "None", SelectedItem, !isMapVoted ?? false);
 			}
 		}
 		#endregion
@@ -51,6 +69,9 @@ namespace RockTheVote.Menus
 			}
 
 			MapServiceProxy.VoteMap(player, _maps.Where(x => x.VisibleName == option.Text).Distinct().First());
+
+			MenuOptions.ForEach(option => { option.Disabled = false; });
+			MenuOptions.Where(x => x.Text == option.Text).ToList().ForEach(x => { x.Disabled = true; });
 		}
 		#endregion
 	}
