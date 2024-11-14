@@ -2,7 +2,7 @@
 
 namespace RockTheVote.Interface
 {
-	public interface IMenuMapSelection
+	public interface IRtvMenu
 	{
 		void CreateMenuOptions(IEnumerable<MapReadModel>? maps);
 	}

@@ -1,6 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
 using RockTheVote.Extensions;
-using RockTheVote.Services;
+using RockTheVote.Proxys;
 
 namespace RockTheVote.EventsHandlers
 {
@@ -11,7 +11,7 @@ namespace RockTheVote.EventsHandlers
 			var player = @event.Userid;
 			if (player.IsPlayerValid())
 			{
-				MapService.DeNominatedMap(player!);
+				MapServiceProxy.DeNominatedMap(player!);
 			}
 			return HookResult.Continue;
 		}

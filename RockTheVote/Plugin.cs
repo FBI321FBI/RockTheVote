@@ -2,8 +2,9 @@
 using CounterStrikeSharp.API.Core;
 using RockTheVote.Commands;
 using RockTheVote.EventsHandlers;
+using RockTheVote.EventsHandlers.RtvEventsHandlers;
 using RockTheVote.Extensions;
-using RockTheVote.Services;
+using RockTheVote.Proxys;
 
 namespace RockTheVote
 {
@@ -32,7 +33,7 @@ namespace RockTheVote
 			AddCommands();
 			RegisterEventsHandlers();
 
-			EventSubscribers();
+			RtvEventSubscribers();
 		}
 		#endregion
 
@@ -48,13 +49,15 @@ namespace RockTheVote
 		{
 			RegisterEventHandler<EventPlayerDisconnect>(PlayerDisconnectEvent.Handler);
 			RegisterEventHandler<EventPlayerDeath>(PlayerDeathEvent.Handler);
+			RegisterEventHandler<EventRoundStart>(RoundStartEvent.Handler, HookMode.Pre);
 		}
 		#endregion
 
 		#region Private
-		private void EventSubscribers()
+		private void RtvEventSubscribers()
 		{
-			MapService.AssigningNewMapEvent += (map) => new Server().PrintToChatAllSafe(Localizer["NextMapMessage", map.VisibleName!]);
+			MapServiceProxy.AssigningNewMapEvent += (map) => new Server().PrintToChatAllSafe(Localizer["NextMapMessage", map.VisibleName!]);
+			MapServiceProxy.PlayerVoteRtvEvent += EventPlayerVoteRtv.Handler;
 		}
 		#endregion
 	}

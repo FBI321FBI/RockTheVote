@@ -1,10 +1,9 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
-using CounterStrikeSharp.API.Modules.Menu;
-using RockTheVote.Enums;
+using Microsoft.Extensions.Localization;
 using RockTheVote.Extensions;
 using RockTheVote.Menus;
-using RockTheVote.Services;
+using RockTheVote.Proxys;
 
 namespace RockTheVote.Commands
 {
@@ -12,6 +11,7 @@ namespace RockTheVote.Commands
 	{
 		#region Properties
 		private static BasePlugin _plugin = Plugin.BasePlugin!;
+		private static IStringLocalizer _localization = Plugin.BasePlugin!.Localizer;
 		#endregion
 
 		#region Handler
@@ -23,10 +23,10 @@ namespace RockTheVote.Commands
 				return;
 			}
 
-			var maps = MapService.GetMaps();
-			var nominatedMenu = new MenuMapSelection(_plugin).OrderMenu(TypeMenuMapSelection.Nominated);
+			var maps = MapServiceProxy.GetMaps();
+			var nominatedMenu = new NominatedMenu(_localization["Nominate.MenuTitle"], _plugin);
 			nominatedMenu.CreateMenuOptions(maps);
-			MenuManager.OpenCenterHtmlMenu(Plugin.BasePlugin!, player!, (CenterHtmlMenu)nominatedMenu);
+			nominatedMenu.Open(player!);
 		}
 		#endregion
 	}

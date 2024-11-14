@@ -5,21 +5,19 @@ using Microsoft.Extensions.Logging;
 using RockTheVote.Interface;
 using RockTheVote.Proxys;
 using RockTheVote.ReadModels;
-using RockTheVote.Services;
 
 namespace RockTheVote.Menus
 {
-	public class RtvMenu : CenterHtmlMenu, IRtvMenu
+	public class VoteMapMenu : CenterHtmlMenu, IRtvMenu
 	{
 		#region Properties
 		private IEnumerable<MapReadModel>? _maps = MapServiceProxy.GetMaps();
 		private ILogger _logger = Plugin.BasePlugin!.Logger;
 		private IStringLocalizer _localizer = Plugin.BasePlugin.Localizer;
-		private int _numberOfNominatedMaps = RockTheVoteService.RockTheVoteConfig.RockTheVote.NumberOfNominatedMaps;
 		#endregion
 
 		#region .ctor
-		public RtvMenu(string title, BasePlugin plugin) : base(title, plugin)
+		public VoteMapMenu(string title, BasePlugin plugin) : base(title, plugin)
 		{
 		}
 		#endregion
@@ -32,25 +30,6 @@ namespace RockTheVote.Menus
 				_logger.LogInformation(_localizer["Logger.ListMapIsNull"]);
 				return;
 			}
-
-			foreach (var map in maps)
-			{
-				for
-				AddMenuOption(map.VisibleName ?? "None", SelectedItem);
-			}
-		}
-		#endregion
-
-		#region Private
-		private void SelectedItem(CCSPlayerController player, ChatMenuOption option)
-		{
-			if (_maps == null)
-			{
-				_logger.LogInformation(_localizer["Logger.ListMapIsNull"]);
-				return;
-			}
-
-			MapServiceProxy.VoteMap(player, _maps.Where(x => x.VisibleName == option.Text).Distinct().First());
 		}
 		#endregion
 	}

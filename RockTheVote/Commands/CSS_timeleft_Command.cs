@@ -1,9 +1,8 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using Microsoft.Extensions.Localization;
 using RockTheVote.Extensions;
-using RockTheVote.Services;
+using RockTheVote.Proxys;
 
 namespace RockTheVote.Commands
 {
@@ -16,7 +15,7 @@ namespace RockTheVote.Commands
 		#region Handler
 		public static void Handler(CCSPlayerController? player, CommandInfo info)
 		{
-			var timeLeft = MapService.GetLeftTime();
+			var timeLeft = MapServiceProxy.GetLeftTime();
 
 			if (timeLeft == null)
 			{

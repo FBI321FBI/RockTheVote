@@ -13,10 +13,12 @@ namespace RockTheVote.EventsHandlers
 
 			if (player.IsPlayerValid())
 			{
-				var menu = (CenterHtmlMenuInstance?)MenuManager.GetActiveMenu(player!);
-				if(menu?.Menu is IMenuMapSelection)
+				if(MenuManager.GetActiveMenu(player!) is BaseMenuInstance menu)
 				{
-					menu.Close();
+					if (menu is IRtvMenu)
+					{
+						menu.Close();
+					}
 				}
 			}
 
