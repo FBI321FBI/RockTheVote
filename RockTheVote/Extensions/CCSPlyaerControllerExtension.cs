@@ -70,6 +70,33 @@ namespace RockTheVote.Extensions
 		/// Отправляет сообщение игроку от имени сервера, если игрок равен null, то отправляет сообщение в консоле.
 		/// Переменная wrap - это обёртка, если wrap = [@], то сообщение будет начинаться [ServerName].
 		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="logger"></param>
+		/// <param name="serverName"></param>
+		/// <param name="wrap"></param>
+		/// <param name="messages"></param>
+		public static void PrintToConsoleSafe(this CCSPlayerController? player, params string[] messages)
+		{
+			if (player.IsPlayerValid())
+			{
+				foreach (var message in messages)
+				{
+					player!.PrintToConsole($"{_localizer["Prefix"]} {message}");
+				}
+			}
+			else
+			{
+				foreach (var message in messages)
+				{
+					_logger.LogInformation($"{message}");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Отправляет сообщение игроку от имени сервера, если игрок равен null, то отправляет сообщение в консоле.
+		/// Переменная wrap - это обёртка, если wrap = [@], то сообщение будет начинаться [ServerName].
+		/// </summary>
 		/// <param name="player">Игрок.</param>
 		/// <param name="logger">Логгер.</param>
 		/// <param name="wrap">Обёртка</param>

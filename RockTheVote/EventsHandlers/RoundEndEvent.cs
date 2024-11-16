@@ -11,6 +11,7 @@ namespace RockTheVote.EventsHandlers
 			{
 				RockTheVoteService.SwitchMapForced(MapService.NextMap);
 			}
+
 			return HookResult.Continue;
 		}
 	}

@@ -1,6 +1,5 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Timers;
 using Microsoft.Extensions.Localization;
 using RockTheVote.Extensions;
 using RockTheVote.Services;

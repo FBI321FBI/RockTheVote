@@ -1,4 +1,5 @@
-﻿using RockTheVote.Services;
+﻿using RockTheVote.Enums;
+using RockTheVote.Services;
 
 namespace RockTheVote.EventsHandlers.RtvEventsHandlers
 {
@@ -6,6 +7,7 @@ namespace RockTheVote.EventsHandlers.RtvEventsHandlers
 	{
 		public static void Handler()
 		{
+			RockTheVoteService.Status = StatusRtv.SelectingMap;
 			MapService.IsMapSelectionStarted = true;
 		}
 	}

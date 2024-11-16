@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Modules.Menu;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using RockTheVote.Enums;
 using RockTheVote.Extensions;
 using RockTheVote.Interface;
 using RockTheVote.Menus;
@@ -25,6 +26,8 @@ namespace RockTheVote.Services
 		public static int RequiredNumberVotesChangeMap =>
 			(int)Math.Round(Utilities.GetPlayers().Where(x => x.IsPlayerValid() == true).Count() *
 				(RockTheVoteConfig.RockTheVote.PercentageForcedVoting / 100D));
+
+		public static StatusRtv Status = StatusRtv.None;
 		#endregion
 
 		#region Public
@@ -39,12 +42,13 @@ namespace RockTheVote.Services
 		public static void StartVoteNewMap()
 		{
 			var maps = MapServiceProxy.GetMaps()?.Where(x=>x.Name != Server.MapName);
-			var rtvMenu = new RtvMenu(_localization["Rtv.MenuTitle"], _plugin);
+			var rtvMenu = new VoteMapMenu(_localization["Rtv.MenuTitle"], _plugin);
+			var mapPickTime = RockTheVoteConfig.RockTheVote.MapPickTime;
 			rtvMenu.CreateMenuOptions(maps);
 			rtvMenu.OpenToAll();
 			MapServiceProxy.MapSelectionStart();
 
-			new Timer(10, () =>
+			new Timer((float)mapPickTime, () =>
 			{
 				Utilities.GetPlayers().Where(x => x.IsPlayerValid() == true).ToList().ForEach(x =>
 				{
@@ -68,6 +72,12 @@ namespace RockTheVote.Services
 		public static void SwitchMapNextRound(MapReadModel map)
 		{
 			MapServiceProxy.SetNextMap(map);
+		}
+
+		public static void ResetToFactorySettingsRtv()
+		{
+			MapService.ResetToFactorySettingsMapService();
+			Status = StatusRtv.None;
 		}
 		#endregion
 	}

@@ -7,6 +7,7 @@
 
 	public class RtvReadModel
 	{
+		public int MapPickTime { get; set; }
 		public int PercentageForcedVoting { get; set; }
 		public int MinPlayersForStartRtv { get; set; }
 		public int NumberOfNominatedMaps { get; set; }

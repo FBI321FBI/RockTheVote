@@ -2,9 +2,11 @@
 using CounterStrikeSharp.API.Modules.Menu;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using RockTheVote.Extensions;
 using RockTheVote.Interface;
 using RockTheVote.Proxys;
 using RockTheVote.ReadModels;
+using RockTheVote.Services;
 
 namespace RockTheVote.Menus
 {
@@ -14,6 +16,7 @@ namespace RockTheVote.Menus
 		private IEnumerable<MapReadModel>? _maps = MapServiceProxy.GetMaps();
 		private ILogger _logger = Plugin.BasePlugin!.Logger;
 		private IStringLocalizer _localizer = Plugin.BasePlugin.Localizer;
+		private int _numberOfNominatedMaps = RockTheVoteService.RockTheVoteConfig.RockTheVote.NumberOfNominatedMaps;
 		#endregion
 
 		#region .ctor
@@ -30,6 +33,47 @@ namespace RockTheVote.Menus
 				_logger.LogInformation(_localizer["Logger.ListMapIsNull"]);
 				return;
 			}
+
+			var maxMapsOnRtvMenu = RockTheVoteService.RockTheVoteConfig.RockTheVote.MaxMapsOnRtvMenu;
+			var numberOfNominatedMaps = RockTheVoteService.RockTheVoteConfig.RockTheVote.NumberOfNominatedMaps;
+			var mapCount = maps.Count();
+			var defaultMapCount = Math.Max(0, maxMapsOnRtvMenu - Math.Min(MapService.NominatedMaps.Count, numberOfNominatedMaps));
+
+			if (MapService.NominatedMaps.Count != 0)
+			{
+				for (var i = 0; i < numberOfNominatedMaps; i++)
+				{
+					var maxNumberOfNominatedMap = Math.Min(MapService.NominatedMaps.Count, numberOfNominatedMaps);
+					var nominatedMap = MapService.NominatedMaps.ElementAt(new Random().Next(0, maxNumberOfNominatedMap)).Value;
+					//bool? isMapVoted = MapService.VotesMap.Where(x => x.Value.Name == nominatedMap.Name).SingleOrDefault().Value?.Equals(nominatedMap);
+					//AddMenuOption(nominatedMap.VisibleName ?? "None", SelectedItem, !isMapVoted ?? false);
+					AddMenuOption(nominatedMap.VisibleName ?? "None", SelectedItem);
+				}
+			}
+
+			for (var i = 0; i < Math.Min(maxMapsOnRtvMenu, defaultMapCount); i++)
+			{
+				var map = maps.ElementAt(new Random().Next(0, Math.Min(maxMapsOnRtvMenu, defaultMapCount)));
+				//bool? isMapVoted = MapService.VotesMap.Where(x => x.Value.Name == map.Name).SingleOrDefault().Value?.Equals(map);
+				//AddMenuOption(map.VisibleName ?? "None", SelectedItem, !isMapVoted ?? false);
+				AddMenuOption(map.VisibleName ?? "None", SelectedItem);
+			}
+		}
+		#endregion
+
+		#region Private
+		private void SelectedItem(CCSPlayerController player, ChatMenuOption option)
+		{
+			if (_maps == null)
+			{
+				_logger.LogInformation(_localizer["Logger.ListMapIsNull"]);
+				return;
+			}
+
+			MapServiceProxy.VoteMap(player, _maps.Where(x => x.VisibleName == option.Text).Distinct().First());
+
+			MenuOptions.ForEach(option => { option.Disabled = false; });
+			MenuOptions.Where(x => x.Text == option.Text).ToList().ForEach(x => { x.Disabled = true; });
 		}
 		#endregion
 	}

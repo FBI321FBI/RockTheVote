@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Modules.Commands;
 using Microsoft.Extensions.Localization;
 using RockTheVote.Extensions;
 using RockTheVote.Proxys;
+using RockTheVote.Services;
 
 namespace RockTheVote.Commands
 {
@@ -26,6 +27,13 @@ namespace RockTheVote.Commands
 			if (timeLeft.TotalSeconds == 0)
 			{
 				player.PrintToChatSafe(_localizer["ZeroSecondsNextMap"]);
+				return;
+			}
+
+			if(MapService.NextMap != null)
+			{
+				player.PrintToChatSafe(_localizer["NextMapMessage", MapService.NextMap.VisibleName]);
+				return;
 			}
 
 			player.PrintToChatSafe(_localizer["TimeLeft", timeLeft.Minutes!, timeLeft.Seconds!]);

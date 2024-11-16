@@ -1,6 +1,5 @@
 ﻿using CounterStrikeSharp.API.Core;
 using RockTheVote.Extensions;
-using RockTheVote.Proxys;
 using RockTheVote.Services;
 
 namespace RockTheVote.EventsHandlers

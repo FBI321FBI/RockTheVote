@@ -1,4 +1,5 @@
-﻿using RockTheVote.Proxys;
+﻿using RockTheVote.Enums;
+using RockTheVote.Proxys;
 using RockTheVote.ReadModels;
 using RockTheVote.Services;
 
@@ -8,6 +9,7 @@ namespace RockTheVote.EventsHandlers.RtvEventsHandlers
 	{
 		public static void Handler(MapReadModel map)
 		{
+			RockTheVoteService.Status = StatusRtv.None;
 			MapService.IsMapSelectionStarted = false;
 
 			var nextMap = MapService.VotesMap

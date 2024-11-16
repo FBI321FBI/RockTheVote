@@ -1,18 +1,30 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using RockTheVote.Attributes;
+using RockTheVote.Enums;
 using RockTheVote.Extensions;
 using RockTheVote.ReadModels;
 using System.Collections.Concurrent;
 
 namespace RockTheVote.Services
 {
+	[SupportsResetRtvElement]
 	public static class MapService
 	{
 		#region Properties
+		[ResetRtvElement("MapReadModel")]
 		public static MapReadModel? NextMap { get; private set; }
+
+		[ResetRtvElement("ConcurrentDictionary", "CCSPlayerController", "MapReadModel")]
 		public static ConcurrentDictionary<CCSPlayerController, MapReadModel> VotesMap = new();
+
+		[ResetRtvElement("ConcurrentDictionary", "CCSPlayerController", "MapReadModel")]
 		public static ConcurrentDictionary<CCSPlayerController, MapReadModel> NominatedMaps = new();
+
+		[ResetRtvElement("HashSet", "CCSPlayerController")]
 		public static HashSet<CCSPlayerController> RtvVotes = new();
+
+		[ResetRtvElement("Boolean")]
 		public static bool IsMapSelectionStarted = false;
 		#endregion
 
@@ -24,6 +36,7 @@ namespace RockTheVote.Services
 
 		public static void SetNextMap(MapReadModel map)
 		{
+			RockTheVoteService.Status = StatusRtv.LastRound;
 			NextMap = map;
 		}
 
@@ -120,6 +133,15 @@ namespace RockTheVote.Services
 		{
 			IsMapSelectionStarted = false;
 		}
+
+		public static void ResetToFactorySettingsMapService()
+		{
+			NextMap = null;
+			VotesMap = new();
+			NominatedMaps = new();
+			RtvVotes = new();
+			IsMapSelectionStarted = false;
+	}
 		#endregion
 	}
 }
