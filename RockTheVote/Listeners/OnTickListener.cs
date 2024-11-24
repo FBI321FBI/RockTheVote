@@ -9,9 +9,9 @@ namespace RockTheVote.Listeners
 		public static void Handler()
 		{
 			var leftTime = MapService.GetLeftTime() ?? new LeftTimeReadModel() { TotalSeconds = 99999};
-			if (leftTime.TotalSeconds == 0 && 
-				RockTheVoteService.Status != StatusRtv.SelectingMap &&
-				RockTheVoteService.Status != StatusRtv.LastRound)
+
+			if (leftTime.TotalSeconds == 0
+				&& RockTheVoteService.Status == StatusRtv.None)
 			{
 				RockTheVoteService.StartVoteNewMap();
 			}

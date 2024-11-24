@@ -24,15 +24,15 @@ namespace RockTheVote.Commands
 				return;
 			}
 
-			if (timeLeft.TotalSeconds == 0)
+			if (MapService.NextMap != null)
 			{
-				player.PrintToChatSafe(_localizer["ZeroSecondsNextMap"]);
+				player.PrintToChatSafe(_localizer["NextMapMessage", MapService.NextMap.VisibleName]);
 				return;
 			}
 
-			if(MapService.NextMap != null)
+			if (timeLeft.TotalSeconds == 0)
 			{
-				player.PrintToChatSafe(_localizer["NextMapMessage", MapService.NextMap.VisibleName]);
+				player.PrintToChatSafe(_localizer["ZeroSecondsNextMap"]);
 				return;
 			}
 

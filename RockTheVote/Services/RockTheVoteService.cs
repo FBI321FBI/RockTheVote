@@ -41,6 +41,7 @@ namespace RockTheVote.Services
 
 		public static void StartVoteNewMap()
 		{
+			Server.PrintToChatAll("StartVoteNewMap");
 			var maps = MapServiceProxy.GetMaps()?.Where(x=>x.Name != Server.MapName);
 			var rtvMenu = new VoteMapMenu(_localization["Rtv.MenuTitle"], _plugin);
 			var mapPickTime = RockTheVoteConfig.RockTheVote.MapPickTime;

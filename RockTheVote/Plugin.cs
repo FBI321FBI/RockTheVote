@@ -53,14 +53,15 @@ namespace RockTheVote
 		{
 			RegisterEventHandler<EventPlayerDisconnect>(PlayerDisconnectEvent.Handler);
 			RegisterEventHandler<EventPlayerDeath>(PlayerDeathEvent.Handler);
-			RegisterEventHandler<EventRoundEnd>(RoundEndEvent.Handler);
+			RegisterEventHandler<EventRoundStart>(RoundStartEvent.Handler);
+			RegisterEventHandler<EventCsWinPanelMatch>(CsWinPanelMatchEvent.Handler);
 		}
 		#endregion
 
 		#region Listeners
 		private void RegisterListenersHandlers()
 		{
-			RegisterListener<OnMapEnd>(OnMapEndListener.Handler);
+			//RegisterListener<OnMapEnd>(OnMapEndListener.Handler);
 			RegisterListener<OnTick>(OnTickListener.Handler);
 		}
 		#endregion
